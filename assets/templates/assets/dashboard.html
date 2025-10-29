@@ -1,0 +1,305 @@
+{% extends 'assets/base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Asset Tracking | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            border-radius: 8px;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255,193,7,0.2) !important;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(30deg);
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .card-header {
+            border-bottom: none;
+            padding: 1.25rem;
+            font-size: 1.1rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            padding: 1rem;
+        }
+        
+        .stat-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        
+        .quick-stats {
+            margin-bottom: 2rem;
+        }
+        
+        .quick-stat-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .quick-stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #198754, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header shadow">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="fw-bold mb-2">
+                    <i class="bi bi-speedometer2 me-2"></i>System Dashboard
+                </h3>
+                <p class="mb-0 opacity-75">Comprehensive overview of asset management and tracking analytics</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <i class="bi bi-graph-up-arrow" style="font-size: 3rem; opacity: 0.7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row quick-stats g-3">
+        <div class="col-md-3">
+            <div class="quick-stat-item">
+                <div class="stat-icon text-success">
+                    <i class="bi bi-pc-display"></i>
+                </div>
+                <div class="stat-value">{{ total_assets|default:"0" }}</div>
+                <div class="stat-label">Total Assets</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quick-stat-item">
+                <div class="stat-icon text-primary">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-value">{{ assets_in_use|default:"0" }}</div>
+                <div class="stat-label">In Use</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quick-stat-item">
+                <div class="stat-icon text-warning">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <div class="stat-value">{{ assets_under_maintenance|default:"0" }}</div>
+                <div class="stat-label">Maintenance</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quick-stat-item">
+                <div class="stat-icon text-info">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-value">{{ department_count|default:"0" }}</div>
+                <div class="stat-label">Departments</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center">
+                    <i class="bi bi-pie-chart me-2"></i>Assets by Condition
+                </div>
+                <div class="card-body p-0">
+                    <div class="chart-container">
+                        <canvas id="conditionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center">
+                    <i class="bi bi-bar-chart me-2"></i>Assets per Department
+                </div>
+                <div class="card-body p-0">
+                    <div class="chart-container">
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Condition Chart (Pie)
+    const conditionCtx = document.getElementById('conditionChart');
+    new Chart(conditionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ condition_labels|safe }},
+            datasets: [{
+                label: 'Asset Condition',
+                data: {{ condition_data|safe }},
+                backgroundColor: [
+                    '#28a745',
+                    '#ffc107',
+                    '#dc3545',
+                    '#6c757d',
+                    '#17a2b8',
+                    '#fd7e14'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 20, usePointStyle: true }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Department Chart (Bar)
+    const departmentCtx = document.getElementById('departmentChart');
+    new Chart(departmentCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ department_labels|safe }},
+            datasets: [{
+                label: 'Assets Count',
+                data: {{ department_data|safe }},
+                backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                borderColor: 'rgba(23, 162, 184, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(23, 162, 184, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 13 }
+                }
+            }
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}
