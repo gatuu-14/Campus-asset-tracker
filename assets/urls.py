@@ -40,6 +40,8 @@ urlpatterns = [
     # =====================
     path('maintenance/', views.maintenance_list, name='maintenance_list'),
     path('maintenance/add/', views.add_maintenance, name='add_maintenance'),
+    path('maintenance/<int:id>/edit/', views.edit_maintenance, name='edit_maintenance'),
+    path('maintenance/<int:id>/edit/', views.delete_maintenance, name='delete_maintenance'),
 
     # =====================
     # Reports

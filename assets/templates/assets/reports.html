@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Asset Reports</h1>
+    <p class="page-subtitle">Comprehensive analytics and insights for asset management</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center shadow stat-card">
+        <div class="card-body">
+          <div class="card-icon text-success">
+            <i class="bi bi-pc-display"></i>
+          </div>
+          <h5 class="stat-label">Total Assets</h5>
+          <div class="stat-number">{{ total_assets }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center shadow stat-card">
+        <div class="card-body">
+          <div class="card-icon text-primary">
+            <i class="bi bi-arrow-left-right"></i>
+          </div>
+          <h5 class="stat-label">Total Movements</h5>
+          <div class="stat-number">{{ movement_count }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center shadow stat-card">
+        <div class="card-body">
+          <div class="card-icon text-warning">
+            <i class="bi bi-tools"></i>
+          </div>
+          <h5 class="stat-label">Maintenance Records</h5>
+          <div class="stat-number">{{ maintenance_count }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assets by Category -->
+  <div class="card shadow mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-grid me-2"></i>Assets by Category
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-success">
+            <tr>
+              <th class="ps-4">Category</th>
+              <th class="text-end pe-4">Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cat in assets_by_category %}
+            <tr>
+              <td class="ps-4 fw-semibold">{{ cat.category__name|default:"Uncategorized" }}</td>
+              <td class="text-end pe-4">
+                <span class="badge bg-success">{{ cat.count }}</span>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2" class="text-center text-muted py-4">
+                <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                No category data available
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assets by Department -->
+  <div class="card shadow">
+    <div class="card-header bg-success text-white">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-building me-2"></i>Assets by Department
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-success">
+            <tr>
+              <th class="ps-4">Department</th>
+              <th class="text-end pe-4">Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dept in assets_by_department %}
+            <tr>
+              <td class="ps-4 fw-semibold">{{ dept.department__name|default:"Unassigned" }}</td>
+              <td class="text-end pe-4">
+                <span class="badge bg-info">{{ dept.count }}</span>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2" class="text-center text-muted py-4">
+                <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                No department data available
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .stat-card {
+    border-left: 4px solid #157347;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #157347;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+</style>
+{% endblock %}

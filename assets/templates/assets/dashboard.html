@@ -103,6 +103,7 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            height: 100%;
         }
         
         .quick-stat-item:hover {
@@ -111,8 +112,16 @@
         }
         
         .stat-icon {
-            font-size: 2.5rem;
             margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .stat-icon img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
         }
         
         .stat-value {
@@ -122,6 +131,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 0.5rem;
         }
         
         .stat-label {
@@ -130,9 +140,13 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 0;
         }
     </style>
 </head>
+<body>
+
+<div class="container mt-4">
     <!-- Dashboard Header -->
     <div class="dashboard-header shadow">
         <div class="row align-items-center">
@@ -149,38 +163,41 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="row quick-stats g-3">
+    <div class="row quick-stats g-4">
         <div class="col-md-3">
             <div class="quick-stat-item">
-                <div class="stat-icon text-success">
-                    <i class="bi bi-pc-display"></i>
+                <div class="stat-icon">
+                    <img src="{% static 'images/total_assets.png' %}" alt="Total Assets" width="60" height="60">
                 </div>
                 <div class="stat-value">{{ total_assets|default:"0" }}</div>
                 <div class="stat-label">Total Assets</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="quick-stat-item">
-                <div class="stat-icon text-primary">
-                    <i class="bi bi-check-circle"></i>
+                <div class="stat-icon">
+                    <img src="{% static 'images/in_use.png' %}" alt="In Use" width="60" height="60">
                 </div>
                 <div class="stat-value">{{ assets_in_use|default:"0" }}</div>
                 <div class="stat-label">In Use</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="quick-stat-item">
-                <div class="stat-icon text-warning">
-                    <i class="bi bi-tools"></i>
+                <div class="stat-icon">
+                    <img src="{% static 'images/maintenance.png' %}" alt="Maintenance" width="60" height="60">
                 </div>
                 <div class="stat-value">{{ assets_under_maintenance|default:"0" }}</div>
                 <div class="stat-label">Maintenance</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="quick-stat-item">
-                <div class="stat-icon text-info">
-                    <i class="bi bi-building"></i>
+                <div class="stat-icon">
+                    <img src="{% static 'images/departments.png' %}" alt="Departments" width="60" height="60">
                 </div>
                 <div class="stat-value">{{ department_count|default:"0" }}</div>
                 <div class="stat-label">Departments</div>

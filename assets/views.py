@@ -265,18 +265,60 @@ def add_maintenance(request):
         form = MaintenanceForm()
     return render(request, 'assets/maintenance_form.html', {'form': form, 'title': 'Add Maintenance Record'})
 
+@login_required
+def edit_maintenance(request, id):
+    record = get_object_or_404(MaintenanceRecord, id=id)
+    
+    if request.method == 'POST':
+        form = MaintenanceForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Maintenance record updated successfully.")
+            return redirect('maintenance_list')
+    else:
+        form = MaintenanceForm(instance=record)
+
+    return render(request, 'assets/maintenance_form.html', {
+        'form': form,
+        'title': 'Edit Maintenance Record'
+    })
+
+
+@login_required
+def delete_maintenance(request, id):
+    record = get_object_or_404(MaintenanceRecord, id=id)
+
+    if request.method == 'POST':
+        record.delete()
+        messages.success(request, "Maintenance record deleted successfully.")
+        return redirect('maintenance_list')
+
+    return render(request, 'assets/confirm_delete.html', {
+        'object': record,
+        'type': 'Maintenance Record'
+    })
+
 
 # -------------------------------
 # Reports View
 # -------------------------------
+
 @login_required
 def reports(request):
     total_assets = Asset.objects.count()
     maintenance_count = MaintenanceRecord.objects.count()
     movement_count = AssetMovement.objects.count()
 
-    assets_by_category = Asset.objects.values('category__name').order_by('category__name')
-    assets_by_department = Asset.objects.values('department__name').order_by('department__name')
+    assets_by_category = (
+        Asset.objects.values('category__name')
+        .annotate(count=Count('id'))
+        .order_by('category__name')
+    )
+    assets_by_department = (
+        Asset.objects.values('department__name')
+        .annotate(count=Count('id'))
+        .order_by('department__name')
+    )
 
     context = {
         'total_assets': total_assets,
