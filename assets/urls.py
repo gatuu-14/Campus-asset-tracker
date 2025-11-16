@@ -6,13 +6,12 @@ urlpatterns = [
     # =====================
     # Authentication Routes
     # =====================
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
 
     # =====================
     # Core Pages
     # =====================
-    path('', views.home, name='home'),  # Home after login
     path('dashboard/', views.dashboard, name='dashboard'),  # Analytics dashboard
 
     # =====================
