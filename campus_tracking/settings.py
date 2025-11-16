@@ -45,7 +45,7 @@ ROOT_URLCONF = 'campus_tracking.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS':  [BASE_DIR / 'assets' / 'templates' / 'assets'],
+        'DIRS':  'templates',
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
